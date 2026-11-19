@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IT Service & Equipment Portal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-nav">
+    <div class="logo">
+      <span class="icon">🏢</span>
+      <span class="title">Enterprise Portal</span>
+      <span class="subtitle">IT Equipment & Service Requests</span>
+    </div>
+    
+    <!-- User Persona Switcher (Simulates login / web session context) -->
+    <div class="user-switcher">
+      <label for="personaSelect">Active User Session:</label>
+      <select id="personaSelect">
+        <option value="alice" selected>Alice Wonderland (Engineering • Senior Dev)</option>
+        <option value="bob">Bob Builder (Sales • Account Exec)</option>
+        <option value="charlie">Charlie Chaplin (People Ops • HR Coord)</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-layout">
+    
+    <!-- LEFT PANEL: The Service Request Form & User Dashboard -->
+    <section class="portal-panel">
+      
+      <div class="card form-card">
+        <div class="card-header">
+          <h2>📝 New Service Request</h2>
+          <span class="badge" id="formStatusBadge">Draft in Progress</span>
+        </div>
+        <p class="card-desc">Submit requests for hardware, software licenses, system permissions, or office supplies.</p>
+        
+        <form id="serviceRequestForm">
+          <!-- User info (Auto-populated from User Context) -->
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label>Employee Name</label>
+              <input type="text" id="fieldName" readonly class="readonly-input">
+            </div>
+            <div class="form-group">
+              <label>Department</label>
+              <input type="text" id="fieldDepartment" readonly class="readonly-input">
+            </div>
+          </div>
+
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label for="fieldCategory">Request Category *</label>
+              <select id="fieldCategory" required>
+                <option value="">-- Select Category --</option>
+                <option value="Hardware">Hardware (Monitors, Laptops, Keyboards)</option>
+                <option value="Software">Software License (IDE, Figma, SaaS)</option>
+                <option value="Access">Cloud / System Access Permissions</option>
+                <option value="Supplies">Office Supplies & Ergonomics</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="fieldPriority">Priority *</label>
+              <select id="fieldPriority" required>
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+                <option value="Urgent">Urgent</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="fieldDescription">Description & Business Justification *</label>
+            <textarea id="fieldDescription" rows="3" placeholder="Describe the item needed, model/specs, and business justification..." required></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="btnManualSubmit">
+              <span>🚀 Submit Request Manually</span>
+            </button>
+            <button type="button" class="btn btn-secondary" id="btnClearForm">
+              <span>Clear Form</span>
+            </button>
+          </div>
+          
+          <div id="submitAlert" class="alert hidden"></div>
+        </form>
+      </div>
+
+      <!-- Submitted Requests Dashboard -->
+      <div class="card dashboard-card">
+        <div class="card-header">
+          <h3>📋 Your Submitted Requests</h3>
+          <button class="btn btn-sm btn-outline" id="btnRefreshRequests">🔄 Refresh</button>
+        </div>
+        <div id="requestsList" class="requests-list">
+          <p class="loading-text">Loading requests...</p>
+        </div>
+      </div>
+      
+    </section>
+
+    <!-- RIGHT PANEL: AI Agent Assistant (Side-Panel Chat) -->
+    <aside class="assistant-panel">
+      <div class="assistant-card">
+        
+        <div class="assistant-header">
+          <div class="assistant-title">
+            <span class="bot-avatar">🤖</span>
+            <div>
+              <h3>Portal Copilot</h3>
+              <p class="status-indicator"><span class="dot"></span> Online • Context-Aware</p>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-icon" id="toggleContextDetails" title="Toggle Context Inspector">🔍</button>
+        </div>
+
+        <!-- Injected Context Inspector (Shows what web/user context is sent) -->
+        <div id="contextInspector" class="context-inspector hidden">
+          <div class="inspector-header">Context Sent to Agent</div>
+          <div class="inspector-content">
+            <p><strong>User ID:</strong> <span id="ctxUserId">alice</span></p>
+            <p><strong>Department:</strong> <span id="ctxDept">Engineering</span></p>
+            <p><strong>Web URL:</strong> <span id="ctxUrl">/portal/requests</span></p>
+            <p><strong>Live Form Draft:</strong></p>
+            <pre id="ctxDraftPreview">{}</pre>
+          </div>
+        </div>
+
+        <!-- Chat Stream -->
+        <div class="chat-messages" id="chatMessages">
+          <div class="message assistant-message">
+            <div class="bubble">
+              👋 Hi! I am your <strong>Portal Copilot</strong>. I can help you complete and submit this service request.<br><br>
+              You can simply describe what you need in chat, ask me to auto-fill the form draft, or tell me to submit it for you!
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Prompt Suggestions -->
+        <div class="quick-prompts">
+          <span class="prompt-chip" data-prompt="I need a new monitor for my desk.">🖥️ I need a monitor</span>
+          <span class="prompt-chip" data-prompt="I need a software license for Figma Enterprise.">💻 Figma License</span>
+          <span class="prompt-chip" data-prompt="What are my active requests?">📋 Check My Requests</span>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form id="chatForm" class="chat-input-area">
+          <input type="text" id="chatInput" placeholder="Ask assistant to fill or submit request..." autocomplete="off" required>
+          <button type="submit" class="btn btn-send" id="btnSendChat">Send</button>
+        </form>
+
+      </div>
+    </aside>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
